@@ -1,0 +1,1719 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>한강 강서인공암벽장 무료강습 대시보드</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ==========================================
+       🎨 프리미엄 글래스모피즘 & 네온 테마 시스템
+       ========================================== */
+    :root {
+      --bg-color: #0b0f19;
+      --panel-bg: rgba(17, 24, 39, 0.7);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      
+      /* Glowing Neon Colors */
+      --neon-cyan: #00f2fe;
+      --neon-cyan-glow: rgba(0, 242, 254, 0.4);
+      --neon-violet: #8a2be2;
+      --neon-violet-glow: rgba(138, 43, 226, 0.4);
+      --neon-green: #05c46b;
+      --neon-green-glow: rgba(5, 196, 107, 0.4);
+      --neon-orange: #ff8c00;
+      --neon-orange-glow: rgba(255, 140, 0, 0.4);
+      --neon-red: #ff3f34;
+      --neon-red-glow: rgba(255, 63, 52, 0.4);
+      
+      --transition-speed: 0.3s;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', 'Noto Sans KR', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding: 24px;
+      line-height: 1.6;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(0, 242, 254, 0.03) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(138, 43, 226, 0.04) 0%, transparent 40%);
+    }
+
+    /* scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(0, 242, 254, 0.3);
+    }
+
+    /* ==========================================
+       🖥️ 레이아웃 구성
+       ========================================== */
+    .dashboard-container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* 헤더 영역 */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .brand-title h1 {
+      font-size: 26px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--neon-cyan), #4facfe);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-title p {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 8px 16px;
+      border-radius: 30px;
+      border: 1px solid var(--border-color);
+      font-size: 13px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background-color: var(--neon-green);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--neon-green);
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.3; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.1); box-shadow: 0 0 14px var(--neon-green); }
+      100% { opacity: 0.3; transform: scale(0.9); }
+    }
+
+    /* 📊 현황 요약 카드 (Grid) */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .glass-card {
+      background: var(--panel-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      transition: transform var(--transition-speed), border-color var(--transition-speed);
+    }
+
+    .glass-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: transparent;
+    }
+
+    .glass-card.regular-card::before { background: linear-gradient(90deg, var(--neon-cyan), #4facfe); }
+    .glass-card.waitlist-card::before { background: linear-gradient(90deg, var(--neon-orange), #ff6b6b); }
+    .glass-card.gear-card::before { background: linear-gradient(90deg, var(--neon-green), var(--neon-cyan)); }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .card-title {
+      font-size: 14px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .card-body {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .number-display {
+      font-size: 32px;
+      font-weight: 700;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .number-display span {
+      font-size: 18px;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    /* SVG 원형 진행 바 */
+    .progress-circle-container {
+      position: relative;
+      width: 80px;
+      height: 80px;
+    }
+
+    .progress-circle-container svg {
+      transform: rotate(-90deg);
+      width: 100%;
+      height: 100%;
+    }
+
+    .circle-bg {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.05);
+      stroke-width: 6;
+    }
+
+    .circle-bar {
+      fill: none;
+      stroke-width: 6;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 1s ease-out;
+    }
+
+    .regular-card .circle-bar { stroke: var(--neon-cyan); filter: drop-shadow(0 0 6px var(--neon-cyan-glow)); }
+    .waitlist-card .circle-bar { stroke: var(--neon-orange); filter: drop-shadow(0 0 6px var(--neon-orange-glow)); }
+
+    .circle-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 13px;
+      font-weight: 600;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    /* 📊 차트 및 분포도 섹션 (Grid) */
+    .details-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 992px) {
+      .details-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* 🧗 하네스/장비 사이즈 차트 */
+    .size-chart-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #fff;
+    }
+
+    .bar-group {
+      margin-bottom: 14px;
+    }
+
+    .bar-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      margin-bottom: 6px;
+      color: var(--text-muted);
+    }
+
+    .bar-label strong {
+      color: var(--text-main);
+    }
+
+    .bar-track {
+      height: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      width: 0;
+      transition: width 1s cubic-bezier(0.1, 0.8, 0.3, 1);
+    }
+
+    .harness-fill-XXS { background: #fd79a8; }
+    .harness-fill-XS  { background: #a29bfe; }
+    .harness-fill-S   { background: #74b9ff; }
+    .harness-fill-M   { background: #55efc4; }
+    .harness-fill-L   { background: #ffeaa7; }
+    .harness-fill-XL  { background: #ff7675; }
+
+    /* 🥾 암벽화 슈즈 사이즈 그리드 */
+    .shoe-sizes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+      gap: 10px;
+    }
+
+    .shoe-badge {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 10px 4px;
+      text-align: center;
+      transition: all var(--transition-speed);
+    }
+
+    .shoe-badge.active {
+      background: linear-gradient(135deg, rgba(0, 242, 254, 0.1), rgba(138, 43, 226, 0.1));
+      border-color: rgba(0, 242, 254, 0.4);
+      box-shadow: 0 0 10px rgba(0, 242, 254, 0.1);
+    }
+
+    .shoe-size-num {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .shoe-size-count {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .shoe-size-count strong {
+      color: var(--neon-cyan);
+      font-size: 13px;
+    }
+
+    /* 분포 소형 패널 (성별/지역) */
+    .mini-stats-row {
+      display: flex;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .mini-stat-card {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .mini-stat-header {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .mini-stat-body {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      font-size: 14px;
+    }
+
+    .gender-label span {
+      display: block;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .gender-label strong {
+      font-size: 16px;
+      font-family: 'Outfit';
+    }
+
+    .gender-male { color: var(--neon-cyan); }
+    .gender-female { color: #fd79a8; }
+
+    /* ==========================================
+       🔍 검색, 필터 및 테이블 섹션
+       ========================================== */
+    .table-control-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .search-wrapper {
+      position: relative;
+      flex: 1;
+      min-width: 250px;
+      max-width: 400px;
+    }
+
+    .search-input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 12px 16px 12px 40px;
+      color: var(--text-main);
+      font-size: 14px;
+      outline: none;
+      transition: all var(--transition-speed);
+    }
+
+    .search-input:focus {
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 10px rgba(0, 242, 254, 0.15);
+      background: rgba(255, 255, 255, 0.07);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .filter-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .filter-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--transition-speed);
+    }
+
+    .filter-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-main);
+    }
+
+    .filter-btn.active {
+      background: linear-gradient(135deg, var(--neon-cyan), #4facfe);
+      border-color: transparent;
+      color: var(--bg-color);
+      font-weight: 600;
+    }
+
+    .action-buttons-top {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-action {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all var(--transition-speed);
+    }
+
+    .btn-action:hover {
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 10px rgba(0, 242, 254, 0.1);
+    }
+
+    .btn-action.btn-excel {
+      background: rgba(5, 196, 107, 0.1);
+      border-color: rgba(5, 196, 107, 0.3);
+      color: var(--neon-green);
+    }
+
+    .btn-action.btn-excel:hover {
+      background: var(--neon-green);
+      color: var(--bg-color);
+      box-shadow: 0 0 12px var(--neon-green-glow);
+    }
+
+    /* 📊 테이블 스타일 */
+    .table-container {
+      overflow-x: auto;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 13px;
+      background: var(--panel-bg);
+    }
+
+    th {
+      background: rgba(255, 255, 255, 0.02);
+      color: var(--text-muted);
+      font-weight: 600;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border-color);
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+    }
+
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: var(--text-main);
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.015);
+    }
+
+    /* 테이블 내 뱃지 */
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 30px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .badge-regular {
+      background: rgba(5, 196, 107, 0.15);
+      color: var(--neon-green);
+      border: 1px solid rgba(5, 196, 107, 0.3);
+      box-shadow: 0 0 8px rgba(5, 196, 107, 0.08);
+    }
+
+    .badge-waitlist {
+      background: rgba(255, 140, 0, 0.15);
+      color: var(--neon-orange);
+      border: 1px solid rgba(255, 140, 0, 0.3);
+      box-shadow: 0 0 8px rgba(255, 140, 0, 0.08);
+    }
+
+    .badge-cancelled {
+      background: rgba(255, 63, 52, 0.15);
+      color: var(--neon-red);
+      border: 1px solid rgba(255, 63, 52, 0.3);
+    }
+
+    /* 테이블 내 인터랙션 버튼 */
+    .btn-row-action {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 500;
+      cursor: pointer;
+      margin-right: 4px;
+      transition: all var(--transition-speed);
+    }
+
+    .btn-row-action:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .btn-promote {
+      background: rgba(5, 196, 107, 0.1);
+      border-color: rgba(5, 196, 107, 0.3);
+      color: var(--neon-green);
+    }
+
+    .btn-promote:hover {
+      background: var(--neon-green);
+      color: var(--bg-color);
+      box-shadow: 0 0 10px var(--neon-green-glow);
+    }
+
+    .btn-cancel {
+      background: rgba(255, 63, 52, 0.1);
+      border-color: rgba(255, 63, 52, 0.3);
+      color: var(--neon-red);
+    }
+
+    .btn-cancel:hover {
+      background: var(--neon-red);
+      color: var(--text-main);
+      box-shadow: 0 0 10px var(--neon-red-glow);
+    }
+
+    .btn-recover {
+      background: rgba(0, 242, 254, 0.1);
+      border-color: rgba(0, 242, 254, 0.3);
+      color: var(--neon-cyan);
+    }
+
+    .btn-recover:hover {
+      background: var(--neon-cyan);
+      color: var(--bg-color);
+      box-shadow: 0 0 10px var(--neon-cyan-glow);
+    }
+
+    /* 대기 순번 및 장비 요약 */
+    .wait-number {
+      font-weight: 700;
+      color: var(--neon-orange);
+      font-family: 'Outfit';
+    }
+
+    .family-badge {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 11px;
+      cursor: help;
+      position: relative;
+    }
+
+    /* 동반 가족 툴팁 */
+    .family-badge:hover::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1e272e;
+      border: 1px solid var(--border-color);
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 8px;
+      white-space: nowrap;
+      font-size: 11px;
+      z-index: 10;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+
+    /* ==========================================
+       ⏳ 로딩 및 알림창 오버레이
+       ========================================== */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(11, 15, 25, 0.85);
+      backdrop-filter: blur(12px);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      transition: opacity var(--transition-speed) ease-in-out;
+    }
+
+    .loading-spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid rgba(0, 242, 254, 0.1);
+      border-left-color: var(--neon-cyan);
+      border-top-color: var(--neon-cyan);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      box-shadow: 0 0 15px var(--neon-cyan-glow);
+      margin-bottom: 20px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      font-size: 16px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      color: var(--text-main);
+    }
+
+    .loading-subtext {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 8px;
+    }
+
+    /* 시뮬레이터 안내 배너 */
+    .sim-banner {
+      background: rgba(0, 242, 254, 0.1);
+      border: 1px solid rgba(0, 242, 254, 0.2);
+      border-radius: 12px;
+      padding: 12px 20px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+    }
+
+    .sim-banner strong {
+      color: var(--neon-cyan);
+    }
+
+    /* 토글 스위치 */
+    .switch-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* 📝 구글 폼 및 설정 연동 버튼 스타일 */
+    .btn-action.btn-form {
+      background: rgba(0, 242, 254, 0.1);
+      border-color: rgba(0, 242, 254, 0.3);
+      color: var(--neon-cyan);
+      text-decoration: none;
+      font-weight: 600;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 0 10px rgba(0, 242, 254, 0.05);
+    }
+    .btn-action.btn-form:hover {
+      background: var(--neon-cyan);
+      color: var(--bg-color);
+      box-shadow: 0 0 12px var(--neon-cyan-glow);
+    }
+    
+    .btn-action.btn-settings {
+      padding: 8px 12px;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .btn-action.btn-settings:hover {
+      border-color: var(--neon-orange);
+      color: var(--neon-orange);
+      box-shadow: 0 0 10px var(--neon-orange-glow);
+    }
+
+    /* 반응형 터치/클릭 보강 */
+    @media (max-width: 768px) {
+      body { padding: 12px; }
+      header { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .table-control-bar { flex-direction: column; align-items: stretch; }
+      .search-wrapper { max-width: 100%; }
+      .filter-buttons { overflow-x: auto; padding-bottom: 4px; }
+      .action-buttons-top { justify-content: flex-end; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ⏳ 로딩 스피너 -->
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-spinner"></div>
+    <div id="loadingText" class="loading-text">구글 스프레드시트 데이터 연동 중...</div>
+    <div class="loading-subtext">실시간 대여 장비 사이즈 분석을 시작합니다.</div>
+  </div>
+
+  <div class="dashboard-container">
+    
+    <!-- 🖥️ 헤더 영역 -->
+    <header>
+      <div class="brand-title">
+        <h1 id="dashboardTitle">🧗 한강 강서인공암벽장 무료강습 대시보드</h1>
+        <p id="dashboardSub">2026년 상반기 무료강습 신청 현황 및 대여 장비 사이즈 실시간 집계</p>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+        <!-- 📝 구글 폼 신청서 바로가기 버튼 -->
+        <a id="formLinkBtn" href="#" target="_blank" class="btn-action btn-form">
+          📝 강습신청서 (구글 폼)
+        </a>
+
+        <!-- 📍 암벽장 선택 드롭다운 -->
+        <div class="search-wrapper" style="margin-bottom: 0; min-width: 220px; max-width: 220px; z-index: 100;">
+          <span class="search-icon" style="top: 52%;">📍</span>
+          <select id="locationSelect" class="search-input" style="padding: 10px 16px 10px 40px; font-weight: bold; cursor: pointer; color: var(--text-main); background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); width: 100%; height: 100%; outline: none;" onchange="switchLocation(this.value)">
+            <option value="gangseo" style="background: var(--bg-color); color: var(--text-main);">🧗 한강 강서인공암벽장</option>
+            <option value="ttukseom" style="background: var(--bg-color); color: var(--text-main);">🧗 한강 뚝섬인공암벽장</option>
+          </select>
+        </div>
+
+        <div id="simModeIndicator" class="sim-banner" style="display: none; margin-bottom: 0; padding: 6px 12px;">
+          <span>⚙️ <strong>시뮬레이션 모드</strong> (로컬 브라우저 구동 중)</span>
+        </div>
+
+        <!-- ⚙️ 연동 설정 버튼 -->
+        <button id="settingsBtn" class="btn-action btn-settings" onclick="openSettingsModal()" title="깃허브 배포 데이터 연동 설정">
+          ⚙️
+        </button>
+
+        <div class="status-badge">
+          <div class="status-dot"></div>
+          <span id="connectionText">스프레드시트 동기화 완료</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- ⚠️ 웹 앱 URL 미등록 시 경고 배너 -->
+    <div id="webappUrlWarningBanner" class="sim-banner" style="display: none; margin-bottom: 24px; border-color: rgba(255, 140, 0, 0.3); background: rgba(255, 140, 0, 0.08); display: flex; justify-content: space-between; align-items: center; width: 100%;">
+      <span>⚠️ <strong>독립 실행 모드 안내</strong>: 현재 시뮬레이션(더미) 데이터를 표시하고 있습니다. 실시간 구글 스프레드시트와 연동하려면 오른쪽 위의 설정(⚙️) 버튼을 클릭하여 웹 앱 URL을 입력해 주세요.</span>
+      <button class="filter-btn active" onclick="openSettingsModal()" style="background: linear-gradient(135deg, var(--neon-orange), #ff6b6b); font-size: 11px; padding: 6px 12px; border-color: transparent;">연동 설정하기</button>
+    </div>
+
+    <!-- 📊 현황 요약 카드 (Grid) -->
+    <section class="summary-grid">
+      <!-- 카드 1: 정규 확정자 -->
+      <div class="glass-card regular-card">
+        <div class="card-header">
+          <span class="card-title">정규 강습 신청자</span>
+          <span class="badge badge-regular">정원 확정</span>
+        </div>
+        <div class="card-body">
+          <div class="number-display">
+            <span id="regularCount">0</span><span> / <span id="regularLimitVal">15</span>명</span>
+          </div>
+          <div class="progress-circle-container">
+            <svg>
+              <circle class="circle-bg" cx="40" cy="40" r="34"></circle>
+              <circle id="regularProgressRing" class="circle-bar" cx="40" cy="40" r="34" stroke-dasharray="213.6" stroke-dashoffset="213.6"></circle>
+            </svg>
+            <div id="regularPercentText" class="circle-text">0%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 카드 2: 대기 신청자 -->
+      <div class="glass-card waitlist-card">
+        <div class="card-header">
+          <span class="card-title">대기 신청자</span>
+          <span class="badge badge-waitlist">대기 순번 등록</span>
+        </div>
+        <div class="card-body">
+          <div class="number-display">
+            <span id="waitlistCount">0</span><span> / <span id="waitlistLimitVal">10</span>명</span>
+          </div>
+          <div class="progress-circle-container">
+            <svg>
+              <circle class="circle-bg" cx="40" cy="40" r="34"></circle>
+              <circle id="waitlistProgressRing" class="circle-bar" cx="40" cy="40" r="34" stroke-dasharray="213.6" stroke-dashoffset="213.6"></circle>
+            </svg>
+            <div id="waitlistPercentText" class="circle-text">0%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 카드 3: 대여 장비 준비 현황 -->
+      <div class="glass-card gear-card">
+        <div class="card-header">
+          <span class="card-title">현장 대여 장비 준비</span>
+          <span class="badge" style="background: rgba(0, 242, 254, 0.15); color: var(--neon-cyan); border: 1px solid rgba(0, 242, 254, 0.3)">대여 합계</span>
+        </div>
+        <div class="card-body">
+          <div>
+            <div class="number-display">
+              <span id="totalGearCount">0</span><span> 세트</span>
+            </div>
+            <p style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">* 동반 가족 대여 장비 수량 포함 합계</p>
+          </div>
+          <div style="font-size: 32px;">🎒</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 📊 차트 및 분포도 섹션 (Grid) -->
+    <section class="details-grid">
+      <!-- 하네스 & 암벽화 분포 -->
+      <div class="glass-card">
+        <div class="size-chart-title">🧗 대여 장비 사이즈별 세부 집계 (동반가족 포함)</div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+          <!-- 하네스 사이즈 통계 -->
+          <div>
+            <h4 style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">하네스 사이즈 분포</h4>
+            <div id="harnessBarsContainer">
+              <!-- JS에서 채워짐 -->
+            </div>
+          </div>
+
+          <!-- 암벽화 슈즈 사이즈 통계 -->
+          <div>
+            <h4 style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">암벽화 발사이즈 분포 (수량 순)</h4>
+            <div id="shoeGridContainer" class="shoe-sizes-grid">
+              <!-- JS에서 채워짐 -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 성별 / 지역 통계 -->
+      <div class="glass-card" style="display: flex; flex-direction: column; justify-content: space-between;">
+        <div class="size-chart-title">📊 신청 통계 요약</div>
+        
+        <div class="mini-stat-card" style="margin-bottom: 14px;">
+          <div class="mini-stat-header">성별 분포 (정규반 대상)</div>
+          <div class="mini-stat-body">
+            <div class="gender-label gender-male">
+              <span>남성</span>
+              <strong id="genderMaleVal">0명</strong>
+            </div>
+            <div style="width: 1px; height: 30px; background: var(--border-color);"></div>
+            <div class="gender-label gender-female">
+              <span>여성</span>
+              <strong id="genderFemaleVal">0명</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="mini-stat-card">
+          <div class="mini-stat-header">동(주소) 거주지 분포</div>
+          <div id="addressDistribution" style="font-size: 13px; max-height: 140px; overflow-y: auto; padding-right: 4px;">
+            <!-- JS에서 동적으로 채워짐 -->
+          </div>
+        </div>
+
+        <div style="font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 16px; border-top: 1px solid var(--border-color); padding-top: 10px;">
+          데이터 동기화: 실시간 시트 감지 작동 중
+        </div>
+      </div>
+    </section>
+
+    <!-- 🔍 검색, 필터 및 테이블 섹션 -->
+    <section class="glass-card" style="padding: 20px;">
+      <div class="table-control-bar">
+        <!-- 검색창 -->
+        <div class="search-wrapper">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="searchInput" class="search-input" placeholder="성명, 연락처, 주소, 사이즈 등으로 검색...">
+        </div>
+
+        <!-- 필터 버튼들 -->
+        <div class="filter-buttons">
+          <button class="filter-btn active" onclick="filterTable('ALL', this)">전체 보기</button>
+          <button class="filter-btn" onclick="filterTable('REGULAR', this)">정규 확정자만</button>
+          <button class="filter-btn" onclick="filterTable('WAITLIST', this)">대기자만</button>
+          <button class="filter-btn" onclick="filterTable('CANCELLED', this)">취소자만</button>
+        </div>
+
+        <!-- 액션 버튼들 -->
+        <div class="action-buttons-top">
+          <button class="btn-action btn-excel" onclick="exportToCSV()">
+            📥 엑셀용 CSV 다운로드
+          </button>
+          <button class="btn-action" onclick="fetchData()">
+            🔄 새로고침
+          </button>
+        </div>
+      </div>
+
+      <!-- 신청자 명단 테이블 -->
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>구분</th>
+              <th>대기번호</th>
+              <th>성명</th>
+              <th>성별</th>
+              <th>생년월일</th>
+              <th>연락처</th>
+              <th>주소(동)</th>
+              <th>하네스</th>
+              <th>암벽화</th>
+              <th>동반가족</th>
+              <th>신청 시각</th>
+              <th style="width: 140px; text-align: center;">작업</th>
+            </tr>
+          </thead>
+          <tbody id="applicantTableBody">
+            <!-- JS에서 동적으로 생성됨 -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ==========================================
+       💻 프론트엔드 비즈니스 로직 & 시뮬레이터
+       ========================================== */ -->
+  <script>
+    // 💡 시뮬레이션용 가짜 데이터 (구글 시트 연동 실패 시/로컬 구동 시 자동 사용)
+    var isSimulationMode = false;
+    var isStandaloneWebMode = false; // 깃허브 배포 시의 독립 웹 실행 여부
+    var currentLocationKey = 'gangseo';
+    
+    // ⚙️ 뚝섬 및 강서 구글 폼 연결 URL 매핑
+    var FORM_URLS = {
+      "gangseo": "https://docs.google.com/forms/d/e/1FAIpQLSeuvhrDFqdtRVps5SUipDAXCp7YwRPadaO_0EH5WuycWuZzyA/viewform",
+      "ttukseom": "https://docs.google.com/forms/d/e/1FAIpQLScof6qP6wWsIWiv4gaEAlS4-C_4wEq8jseA68PKEtSD13S9VQ/viewform"
+    };
+    
+    var mockState = {
+      stats: {
+        locationKey: "gangseo",
+        locationName: "한강 강서인공암벽장",
+        regularCount: 12,
+        regularLimit: 15,
+        waitlistCount: 4,
+        waitlistLimit: 10,
+        cancelledCount: 1,
+        harnessSizes: { "XXS": 1, "XS": 2, "S": 4, "M": 6, "L": 3, "XL": 2 },
+        shoeSizes: { "230": 1, "240": 2, "250": 3, "260": 5, "270": 4, "280": 2, "290": 1 },
+        gender: { "남성": 8, "여성": 7, "미지정": 0 },
+        addresses: { "가양동": 5, "등촌동": 4, "염창동": 3, "화곡동": 2, "기타": 1 }
+      },
+      applicants: [
+        { sheetName: "설문지 응답 1", rowIndex: 0, status: "정규 확정", waitNo: null, name: "김강서", gender: "남성", birthdate: "19920314", phone: "010-1234-5678", address: "가양동", harnessSize: "M", shoeSize: "270", hasFamily: "없음", familyCount: 0, familyNames: "", familyShoes: "", familyHarnesses: "", timestamp: "2026-05-09 09:02" },
+        { sheetName: "설문지 응답 1", rowIndex: 1, status: "정규 확정", waitNo: null, name: "박수아", gender: "여성", birthdate: "19890721", phone: "010-8765-4321", address: "등촌동", harnessSize: "S", shoeSize: "240", hasFamily: "있음", familyCount: 1, familyNames: "박지성", familyShoes: "260", familyHarnesses: "M", timestamp: "2026-05-09 09:05" },
+        { sheetName: "설문지 응답 1", rowIndex: 2, status: "정규 확정", waitNo: null, name: "최등반", gender: "남성", birthdate: "19951102", phone: "010-2468-1357", address: "가양동", harnessSize: "L", shoeSize: "280", hasFamily: "없음", familyCount: 0, familyNames: "", familyShoes: "", familyHarnesses: "", timestamp: "2026-05-09 09:15" },
+        { sheetName: "설문지 응답 1", rowIndex: 3, status: "정규 확정", waitNo: null, name: "이클라임", gender: "여성", birthdate: "19940108", phone: "010-1357-2468", address: "염창동", harnessSize: "XS", shoeSize: "235", hasFamily: "있음", familyCount: 2, familyNames: "이빌레이, 이홀드", familyShoes: "250, 240", familyHarnesses: "S, XXS", timestamp: "2026-05-09 09:22" },
+        { sheetName: "설문지 응답 1", rowIndex: 4, status: "취소", waitNo: null, name: "정태양", gender: "남성", birthdate: "19910430", phone: "010-3333-4444", address: "화곡동", harnessSize: "XL", shoeSize: "290", hasFamily: "없음", familyCount: 0, familyNames: "", familyShoes: "", familyHarnesses: "", timestamp: "2026-05-09 09:30" },
+        { sheetName: "설문지 응답 1", rowIndex: 5, status: "정규 확정", waitNo: null, name: "임건호", gender: "남성", birthdate: "19871212", phone: "010-5555-6666", address: "등촌동", harnessSize: "XL", shoeSize: "275", hasFamily: "없음", familyCount: 0, familyNames: "", familyShoes: "", familyHarnesses: "", timestamp: "2026-05-09 09:45" },
+        { sheetName: "설문지 응답 1", rowIndex: 15, status: "대기 신청", waitNo: 1, name: "윤대기", gender: "남성", birthdate: "19900909", phone: "010-9999-8888", address: "가양동", harnessSize: "M", shoeSize: "265", hasFamily: "없음", familyCount: 0, familyNames: "", familyShoes: "", familyHarnesses: "", timestamp: "2026-05-10 10:01" },
+        { sheetName: "설문지 응답 1", rowIndex: 16, status: "대기 신청", waitNo: 2, name: "황보연", gender: "여성", birthdate: "19960515", phone: "010-7777-6666", address: "염창동", harnessSize: "M", shoeSize: "250", hasFamily: "없음", familyCount: 0, familyNames: "", familyShoes: "", familyHarnesses: "", timestamp: "2026-05-10 11:32" },
+        { sheetName: "설문지 응답 1", rowIndex: 17, status: "대기 신청", waitNo: 3, name: "안상수", gender: "남성", birthdate: "19850202", phone: "010-4444-1111", address: "화곡동", harnessSize: "L", shoeSize: "270", hasFamily: "있음", familyCount: 1, familyNames: "안나영", familyShoes: "230", familyHarnesses: "XS", timestamp: "2026-05-10 14:05" },
+        { sheetName: "설문지 응답 1", rowIndex: 18, status: "대기 신청", waitNo: 4, name: "한민정", gender: "여성", birthdate: "19931015", phone: "010-2222-7777", address: "가양동", harnessSize: "S", shoeSize: "245", hasFamily: "없음", familyCount: 0, familyNames: "", familyShoes: "", familyHarnesses: "", timestamp: "2026-05-10 17:12" }
+      ]
+    };
+
+    var currentFilter = 'ALL';
+    var originalData = null; // 구글 서버에서 수신한 원본 데이터 저장소
+
+    // 페이지 로드 시 구글 API 호출 또는 시뮬레이션 작동
+    window.onload = function() {
+      // google.script.run이 존재하지 않는 경우 독립형(깃허브/로컬) 실행 모드 활성화
+      if (typeof google === 'undefined' || typeof google.script === 'undefined') {
+        isStandaloneWebMode = true;
+        
+        // localStorage에 저장된 구글 앱스 스크립트 웹 앱 URL 검색
+        var savedWebappUrl = localStorage.getItem("gas_webapp_url");
+        
+        if (savedWebappUrl && savedWebappUrl.trim() !== "") {
+          isSimulationMode = false;
+          document.getElementById("connectionText").innerText = "독립 웹 실시간 동기화";
+          fetchData();
+        } else {
+          // 등록된 웹 앱 URL이 없는 경우, 알림 배너를 노출하고 시뮬레이션 모드로 가동
+          isSimulationMode = true;
+          document.getElementById("webappUrlWarningBanner").style.display = "flex";
+          document.getElementById("simModeIndicator").style.display = "block";
+          document.getElementById("connectionText").innerText = "임시 시뮬레이션 모드";
+          document.getElementById("loadingOverlay").style.opacity = "0";
+          setTimeout(function() {
+            document.getElementById("loadingOverlay").style.display = "none";
+          }, 300);
+          originalData = mockState;
+          renderDashboard(originalData);
+        }
+      } else {
+        // 구글 Apps Script 내부 실행인 경우
+        fetchData();
+      }
+
+      // 검색창 이벤트 연결
+      document.getElementById("searchInput").addEventListener("input", function() {
+        filterTableData();
+      });
+      
+      // 설정 입력 필드 초기화
+      var inputField = document.getElementById("gasWebappUrl");
+      if (inputField && localStorage.getItem("gas_webapp_url")) {
+        inputField.value = localStorage.getItem("gas_webapp_url");
+      }
+    };
+
+    /**
+     * 구글 시트에서 최신 정보 불러오기
+     */
+    function fetchData() {
+      showLoading("데이터 연동 중...", "선택한 암벽장의 실시간 신청 정보를 동기화하고 있습니다.");
+      
+      if (isSimulationMode) {
+        hideLoading();
+        renderDashboard(originalData);
+        return;
+      }
+      
+      // 독립 웹 실행 모드(GitHub Pages 등)에서의 API 연동 지원 (CORS 우회 fetch 활용)
+      if (isStandaloneWebMode && localStorage.getItem("gas_webapp_url")) {
+        var webappUrl = localStorage.getItem("gas_webapp_url");
+        var separator = webappUrl.indexOf('?') > -1 ? '&' : '?';
+        var targetUrl = webappUrl + separator + "action=getDashboardData&location=" + currentLocationKey;
+        
+        fetch(targetUrl)
+          .then(function(res) { 
+            if (!res.ok) throw new Error("HTTP 오류: " + res.status);
+            return res.json(); 
+          })
+          .then(function(response) {
+            hideLoading();
+            if (response.success) {
+              originalData = response;
+              renderDashboard(response);
+            } else {
+              alert("스프레드시트 API 반환 에러: " + response.message);
+            }
+          })
+          .catch(function(error) {
+            hideLoading();
+            console.error("Fetch Error:", error);
+            alert("스프레드시트 데이터 연동 실패!\n\n1. 설정(⚙️)의 구글 앱스 스크립트 웹 앱 URL이 정확한지 확인해주세요.\n2. 구글 Apps Script 배포 시 액세스 권한이 '모든 사용자(Anyone)'로 되어 있는지 확인해주세요.\n\n(상세 설명: " + error.toString() + ")");
+          });
+        return;
+      }
+      
+      // Google Apps Script 내부 실행인 경우
+      google.script.run
+        .withSuccessHandler(function(response) {
+          hideLoading();
+          if (response.success) {
+            originalData = response;
+            renderDashboard(response);
+          } else {
+            alert("에러 발생: " + response.message);
+          }
+        })
+        .withFailureHandler(function(error) {
+          hideLoading();
+          alert("네트워크 연결 실패: " + error.toString());
+        })
+        .getDashboardData(currentLocationKey);
+    }
+
+    /**
+     * 선택한 암벽장(위치)으로 데이터를 전환하는 함수
+     */
+    function switchLocation(locationKey) {
+      currentLocationKey = locationKey;
+      
+      // 시뮬레이션 모드 시 목 데이터 보정 전환
+      if (isSimulationMode) {
+        if (locationKey === "ttukseom") {
+          originalData = {
+            stats: {
+              locationKey: "ttukseom",
+              locationName: "한강 뚝섬인공암벽장",
+              regularCount: 2,
+              regularLimit: 15,
+              waitlistCount: 1,
+              waitlistLimit: 10,
+              cancelledCount: 0,
+              harnessSizes: { "XXS": 0, "XS": 1, "S": 1, "M": 1, "L": 0, "XL": 1 },
+              shoeSizes: { "240": 1, "255": 1, "265": 1, "275": 1 },
+              gender: { "남성": 2, "여성": 1, "미지정": 0 },
+              addresses: { "자양동": 2, "화양동": 1 }
+            },
+            applicants: [
+              { sheetName: "설문지 응답 2", rowIndex: 0, status: "정규 확정", waitNo: null, name: "뚝섬남", gender: "남성", birthdate: "19930412", phone: "010-3333-3333", address: "자양동", harnessSize: "M", shoeSize: "265", hasFamily: "없음", familyCount: 0, familyNames: "", familyShoes: "", familyHarnesses: "", timestamp: "2026-05-15 09:00" },
+              { sheetName: "설문지 응답 2", rowIndex: 1, status: "정규 확정", waitNo: null, name: "뚝섬여", gender: "여성", birthdate: "19961123", phone: "010-4444-4444", address: "화양동", harnessSize: "XS", shoeSize: "240", hasFamily: "있음", familyCount: 1, familyNames: "뚝동반", familyShoes: "255", familyHarnesses: "S", timestamp: "2026-05-15 09:12" },
+              { sheetName: "설문지 응답 2", rowIndex: 15, status: "대기 신청", waitNo: 1, name: "대기뚝", gender: "남성", birthdate: "19880119", phone: "010-9999-7777", address: "자양동", harnessSize: "XL", shoeSize: "275", hasFamily: "없음", familyCount: 0, familyNames: "", familyShoes: "", familyHarnesses: "", timestamp: "2026-05-16 10:05" }
+            ]
+          };
+        } else {
+          originalData = mockState;
+        }
+        renderDashboard(originalData);
+      } else {
+        fetchData();
+      }
+    }
+
+    /**
+     * 대시보드 화면에 데이터를 채우고 렌더링하는 핵심 함수
+     */
+    function renderDashboard(data) {
+      if (!data) return;
+
+      var stats = data.stats;
+      
+      // 폼 신청 버튼 상태/텍스트 업데이트
+      updateFormButton();
+      
+      // 헤더 텍스트 변경
+      var titleText = "🧗 " + stats.locationName + " 무료강습 대시보드";
+      document.getElementById("dashboardTitle").innerText = titleText;
+      document.title = titleText;
+      
+      // 1. 숫자 세트 업데이트
+      document.getElementById("regularCount").innerText = stats.regularCount;
+      document.getElementById("regularLimitVal").innerText = stats.regularLimit;
+      document.getElementById("waitlistCount").innerText = stats.waitlistCount;
+      document.getElementById("waitlistLimitVal").innerText = stats.waitlistLimit;
+      
+      // 2. 동반가족 포함 총 장비 준비 대여 수량 계산
+      var totalGear = 0;
+      Object.keys(stats.harnessSizes).forEach(function(size) {
+        totalGear += stats.harnessSizes[size];
+      });
+      document.getElementById("totalGearCount").innerText = totalGear;
+
+      // 3. 정규반 SVG 원형 차트 계산
+      var regPercent = Math.min(Math.round((stats.regularCount / stats.regularLimit) * 100), 100);
+      document.getElementById("regularPercentText").innerText = regPercent + "%";
+      setRingOffset("regularProgressRing", regPercent);
+
+      // 4. 대기반 SVG 원형 차트 계산
+      var waitPercent = Math.min(Math.round((stats.waitlistCount / stats.waitlistLimit) * 100), 100);
+      document.getElementById("waitlistPercentText").innerText = waitPercent + "%";
+      setRingOffset("waitlistProgressRing", waitPercent);
+
+      // 5. 하네스 사이즈 분포 막대 렌더링
+      var harnessContainer = document.getElementById("harnessBarsContainer");
+      harnessContainer.innerHTML = "";
+      
+      var maxHarness = 0;
+      Object.keys(stats.harnessSizes).forEach(function(size) {
+        if (stats.harnessSizes[size] > maxHarness) maxHarness = stats.harnessSizes[size];
+      });
+
+      var sizeLabels = ["XXS", "XS", "S", "M", "L", "XL"];
+      sizeLabels.forEach(function(size) {
+        var count = stats.harnessSizes[size] || 0;
+        var widthPercent = maxHarness > 0 ? (count / maxHarness) * 100 : 0;
+        
+        var barHtml = 
+          '<div class="bar-group">' +
+            '<div class="bar-label">' +
+              '<strong>' + size + '</strong>' +
+              '<span>' + count + '개</span>' +
+            '</div>' +
+            '<div class="bar-track">' +
+              '<div class="bar-fill harness-fill-' + size + '" style="width: ' + widthPercent + '%"></div>' +
+            '</div>' +
+          '</div>';
+        harnessContainer.insertAdjacentHTML('beforeend', barHtml);
+      });
+
+      // 6. 암벽화 신발 사이즈 그리드 렌더링
+      var shoeContainer = document.getElementById("shoeGridContainer");
+      shoeContainer.innerHTML = "";
+      
+      // 슈즈 사이즈를 내림차순 정렬
+      var sortedShoes = Object.keys(stats.shoeSizes).sort(function(a, b) {
+        return stats.shoeSizes[b] - stats.shoeSizes[a];
+      });
+
+      if (sortedShoes.length === 0) {
+        shoeContainer.innerHTML = '<p style="font-size:12px; color:var(--text-muted); grid-column: 1/-1; text-align:center;">신청된 대여 암벽화 정보가 없습니다.</p>';
+      } else {
+        sortedShoes.forEach(function(size) {
+          var count = stats.shoeSizes[size];
+          var badgeHtml = 
+            '<div class="shoe-badge active">' +
+              '<div class="shoe-size-num">' + size + '</div>' +
+              '<div class="shoe-size-count"><strong>' + count + '</strong> 족</div>' +
+            '</div>';
+          shoeContainer.insertAdjacentHTML('beforeend', badgeHtml);
+        });
+      }
+
+      // 7. 성별 통계
+      document.getElementById("genderMaleVal").innerText = (stats.gender["남성"] || 0) + "명";
+      document.getElementById("genderFemaleVal").innerText = (stats.gender["여성"] || 0) + "명";
+
+      // 8. 동(주소) 거주지 분포 리스트
+      var addressContainer = document.getElementById("addressDistribution");
+      addressContainer.innerHTML = "";
+      
+      var sortedAddrs = Object.keys(stats.addresses).sort(function(a, b) {
+        return stats.addresses[b] - stats.addresses[a];
+      });
+
+      if (sortedAddrs.length === 0) {
+        addressContainer.innerHTML = '<p style="color:var(--text-muted); text-align:center;">거주지 정보가 없습니다.</p>';
+      } else {
+        sortedAddrs.forEach(function(dong) {
+          var count = stats.addresses[dong];
+          var addrHtml = 
+            '<div style="display:flex; justify-content:space-between; margin-bottom:8px; border-bottom:1px dashed rgba(255,255,255,0.03); padding-bottom:4px;">' +
+              '<span>📍 ' + dong + '</span>' +
+              '<strong>' + count + '명</strong>' +
+            '</div>';
+          addressContainer.insertAdjacentHTML('beforeend', addrHtml);
+        });
+      }
+
+      // 9. 테이블 렌더링
+      filterTableData();
+    }
+
+    /**
+     * SVG 서클 오프셋 적용 보조 함수
+     */
+    function setRingOffset(elementId, percent) {
+      var circle = document.getElementById(elementId);
+      if (!circle) return;
+      var radius = circle.r.baseVal.value;
+      var circumference = 2 * Math.PI * radius;
+      var offset = circumference - (percent / 100) * circumference;
+      circle.style.strokeDasharray = circumference + " " + circumference;
+      circle.style.strokeDashoffset = offset;
+    }
+
+    /**
+     * 구분에 따른 테이블 데이터 필터링
+     */
+    function filterTable(filterType, btn) {
+      currentFilter = filterType;
+      
+      // 액티브 필터 디자인 변경
+      var buttons = document.querySelectorAll(".filter-buttons .filter-btn");
+      buttons.forEach(function(b) { b.classList.remove("active"); });
+      btn.classList.add("active");
+      
+      filterTableData();
+    }
+
+    /**
+     * 테이블에 검색어 및 구분 필터를 적용하여 데이터를 그리는 함수
+     */
+    function filterTableData() {
+      if (!originalData || !originalData.applicants) return;
+      
+      var tbody = document.getElementById("applicantTableBody");
+      tbody.innerHTML = "";
+
+      var searchQuery = document.getElementById("searchInput").value.trim().toLowerCase();
+      
+      var filtered = originalData.applicants.filter(function(item) {
+        // 1. 구분 필터 적용
+        if (currentFilter === 'REGULAR' && item.status !== '정규 확정' && item.status !== '확정 승격') return false;
+        if (currentFilter === 'WAITLIST' && item.status !== '대기 신청') return false;
+        if (currentFilter === 'CANCELLED' && item.status !== '취소') return false;
+
+        // 2. 검색 텍스트 필터 적용
+        if (searchQuery !== "") {
+          var matchesSearch = 
+            item.name.toLowerCase().includes(searchQuery) ||
+            item.phone.toLowerCase().includes(searchQuery) ||
+            item.address.toLowerCase().includes(searchQuery) ||
+            item.shoeSize.toLowerCase().includes(searchQuery) ||
+            item.harnessSize.toLowerCase().includes(searchQuery) ||
+            item.status.toLowerCase().includes(searchQuery);
+          
+          if (!matchesSearch) return false;
+        }
+
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="12" style="text-align:center; color:var(--text-muted); padding:30px;">조건에 일치하는 신청자 명단이 없습니다.</td></tr>';
+        return;
+      }
+
+      // 테이블 폼 로드
+      filtered.forEach(function(item) {
+        var statusBadge = "";
+        var actionBtns = "";
+
+        // 상태별 뱃지 스타일 정의
+        if (item.status === "정규 확정" || item.status === "확정 승격") {
+          statusBadge = '<span class="badge badge-regular">정규 확정</span>';
+          actionBtns = '<button class="btn-row-action btn-cancel" onclick="changeStatus(\'' + item.sheetName + '\', ' + item.rowIndex + ', \'취소\')">신청 취소</button>';
+        } else if (item.status === "대기 신청") {
+          statusBadge = '<span class="badge badge-waitlist">대기 신청</span>';
+          actionBtns = 
+            '<button class="btn-row-action btn-promote" onclick="changeStatus(\'' + item.sheetName + '\', ' + item.rowIndex + ', \'확정 승격\')">확정 승격</button>' +
+            '<button class="btn-row-action btn-cancel" onclick="changeStatus(\'' + item.sheetName + '\', ' + item.rowIndex + ', \'취소\')">취소 처리</button>';
+        } else if (item.status === "취소") {
+          statusBadge = '<span class="badge badge-cancelled">신청 취소</span>';
+          var originStatus = item.rowIndex < originalData.stats.regularLimit ? "정규 확정" : "대기 신청";
+          actionBtns = '<button class="btn-row-action btn-recover" onclick="changeStatus(\'' + item.sheetName + '\', ' + item.rowIndex + ', \'' + originStatus + '\')">대기/복구</button>';
+        }
+
+        // 동반 가족 정보 텍스트화
+        var familyCell = "없음";
+        if (item.hasFamily === "있음" && item.familyCount > 0) {
+          var tooltip = "명단: " + item.familyNames + " | 신발: " + item.familyShoes + " | 하네스: " + item.familyHarnesses;
+          familyCell = '<span class="family-badge" data-tooltip="' + tooltip + '">가족 ' + item.familyCount + '명 ℹ️</span>';
+        }
+
+        var waitNoCell = item.waitNo ? '<span class="wait-number">대기 ' + item.waitNo + '번</span>' : '-';
+
+        var trHtml = 
+          '<tr>' +
+            '<td>' + statusBadge + '</td>' +
+            '<td>' + waitNoCell + '</td>' +
+            '<td style="font-weight:600;">' + item.name + '</td>' +
+            '<td>' + item.gender + '</td>' +
+            '<td>' + item.birthdate + '</td>' +
+            '<td>' + item.phone + '</td>' +
+            '<td>' + item.address + '</td>' +
+            '<td style="font-weight:600; color:var(--neon-cyan);">' + item.harnessSize + '</td>' +
+            '<td style="font-weight:600; color:var(--neon-cyan);">' + item.shoeSize + '</td>' +
+            '<td>' + familyCell + '</td>' +
+            '<td style="color:var(--text-muted); font-size:11px;">' + item.timestamp + '</td>' +
+            '<td style="text-align:center;">' + actionBtns + '</td>' +
+          '</tr>';
+        
+        tbody.insertAdjacentHTML('beforeend', trHtml);
+      });
+    }
+
+    /**
+     * 신청자 상태 변경 요청 함수
+     */
+    function changeStatus(sheetName, rowIndex, newStatus) {
+      if (!confirm("해당 신청자의 상태를 [" + newStatus + "]으로 변경하시겠습니까?")) return;
+
+      showLoading("스프레드시트 갱신 중...", "데이터를 시트에 입력하고 분석을 재조정하고 있습니다.");
+
+      if (isSimulationMode) {
+        setTimeout(function() {
+          // 시뮬레이터 로직
+          var applicant = originalData.applicants.find(function(a) {
+            return a.sheetName === sheetName && a.rowIndex === rowIndex;
+          });
+          
+          if (applicant) {
+            applicant.status = newStatus;
+            
+            // 정규 취소 시 첫 대기자 승격 시뮬레이션
+            if (newStatus === "취소") {
+              var nextWait = originalData.applicants.find(function(a) {
+                return (a.status === "대기 신청" || a.status === "");
+              });
+              if (nextWait) {
+                nextWait.status = "확정 승격";
+                alert("대기 1번 [" + nextWait.name + "]님이 자동으로 [확정 승격] 처리되었습니다.");
+              }
+            }
+            
+            // 통계 재계산
+            recalculateSimulationStats();
+            hideLoading();
+            renderDashboard(originalData);
+          }
+        }, 500);
+        return;
+      }
+
+      // 독립 웹 실행 모드(GitHub Pages 등)에서의 상태 수정 API 호출
+      if (isStandaloneWebMode && localStorage.getItem("gas_webapp_url")) {
+        var webappUrl = localStorage.getItem("gas_webapp_url");
+        var separator = webappUrl.indexOf('?') > -1 ? '&' : '?';
+        var targetUrl = webappUrl + separator + "action=updateApplicantStatus&location=" + currentLocationKey + "&rowIndex=" + rowIndex + "&newStatus=" + encodeURIComponent(newStatus);
+        
+        fetch(targetUrl)
+          .then(function(res) { 
+            if (!res.ok) throw new Error("HTTP 오류: " + res.status);
+            return res.json(); 
+          })
+          .then(function(response) {
+            hideLoading();
+            if (response.success) {
+              fetchData();
+            } else {
+              alert("상태 수정 실패: " + response.message);
+            }
+          })
+          .catch(function(error) {
+            hideLoading();
+            alert("서버 연결 실패: " + error.toString());
+          });
+        return;
+      }
+
+      // 실제 구글 스프레드시트 업데이트
+      google.script.run
+        .withSuccessHandler(function(response) {
+          if (response.success) {
+            fetchData();
+          } else {
+            hideLoading();
+            alert("변경 실패: " + response.message);
+          }
+        })
+        .withFailureHandler(function(error) {
+          hideLoading();
+          alert("서버 연결 실패: " + error.toString());
+        })
+        .updateApplicantStatus(currentLocationKey, rowIndex, newStatus);
+    }
+
+    /**
+     * 시뮬레이터용 데이터 통계 재계산 보조 함수
+     */
+    function recalculateSimulationStats() {
+      var isTtukseom = currentLocationKey === "ttukseom";
+      var stats = {
+        locationKey: currentLocationKey,
+        locationName: isTtukseom ? "한강 뚝섬인공암벽장" : "한강 강서인공암벽장",
+        regularCount: 0,
+        regularLimit: 15,
+        waitlistCount: 0,
+        waitlistLimit: 10,
+        cancelledCount: 0,
+        harnessSizes: { "XXS": 0, "XS": 0, "S": 0, "M": 0, "L": 0, "XL": 0 },
+        shoeSizes: {},
+        gender: { "남성": 0, "여성": 0, "미지정": 0 },
+        addresses: {}
+      };
+
+      originalData.applicants.forEach(function(item) {
+        item.waitNo = null;
+
+        if (item.status === "취소") {
+          stats.cancelledCount++;
+        } else if (item.status === "정규 확정" || item.status === "확정 승격") {
+          stats.regularCount++;
+          aggregateStatsSim(item, stats);
+        } else if (item.status === "대기 신청") {
+          stats.waitlistCount++;
+          item.waitNo = stats.waitlistCount;
+        }
+      });
+
+      originalData.stats = stats;
+    }
+
+    function aggregateStatsSim(item, stats) {
+      if (item.gender === "남성" || item.gender === "남") stats.gender["남성"]++;
+      else if (item.gender === "여성" || item.gender === "여") stats.gender["여성"]++;
+      
+      if (stats.harnessSizes[item.harnessSize] !== undefined) stats.harnessSizes[item.harnessSize]++;
+      
+      if (item.shoeSize) {
+        var sz = item.shoeSize.replace(/[^0-9]/g, "");
+        if (sz.length >= 3) stats.shoeSizes[sz] = (stats.shoeSizes[sz] || 0) + 1;
+      }
+      
+      if (item.address) {
+        stats.addresses[item.address] = (stats.addresses[item.address] || 0) + 1;
+      }
+
+      if (item.hasFamily === "있음" && item.familyCount > 0) {
+        if (item.familyHarnesses) {
+          item.familyHarnesses.split(/[,/ ]+/).forEach(function(s) {
+            var cs = s.trim().toUpperCase();
+            if (stats.harnessSizes[cs] !== undefined) stats.harnessSizes[cs]++;
+          });
+        }
+        if (item.familyShoes) {
+          item.familyShoes.split(/[,/ ]+/).forEach(function(sh) {
+            var csh = sh.replace(/[^0-9]/g, "").trim();
+            if (csh.length >= 3) stats.shoeSizes[csh] = (stats.shoeSizes[csh] || 0) + 1;
+          });
+        }
+      }
+    }
+
+    /**
+     * 테이블 데이터를 CSV 파일로 내보내기 (한국어 호환용 UTF-8 BOM 적용)
+     */
+    function exportToCSV() {
+      if (!originalData || !originalData.applicants) return;
+
+      var csvContent = "\uFEFF"; // UTF-8 BOM
+      
+      csvContent += "상태,대기번호,성명,성별,생년월일,연락처,주소(동),하네스,암벽화,동반가족여부,동반가족수,동반가족명단,동반가족슈즈,동반가족하네스,신청시각\n";
+      
+      originalData.applicants.forEach(function(item) {
+        var waitNo = item.waitNo ? "대기 " + item.waitNo + "번" : "";
+        var row = [
+          item.status,
+          waitNo,
+          item.name,
+          item.gender,
+          "'" + item.birthdate,
+          "'" + item.phone,
+          item.address,
+          item.harnessSize,
+          item.shoeSize,
+          item.hasFamily,
+          item.familyCount,
+          item.familyNames.replace(/,/g, " /"),
+          item.familyShoes.replace(/,/g, " /"),
+          item.familyHarnesses.replace(/,/g, " /"),
+          item.timestamp
+        ];
+        
+        csvContent += row.join(",") + "\n";
+      });
+
+      var blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      var url = URL.createObjectURL(blob);
+      var link = document.createElement("a");
+      link.setAttribute("href", url);
+      
+      var locationNameShort = currentLocationKey === 'gangseo' ? "gangseo" : "ttukseom";
+      var locationNameKor = currentLocationKey === 'gangseo' ? "강서" : "뚝섬";
+      link.setAttribute("download", "한강_" + locationNameKor + "인공암벽장_강습신청현황_" + new Date().toISOString().slice(0,10) + ".csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    /* ==========================================
+       ⏳ UI 헬퍼 함수들 (로딩 제어)
+       ========================================== */
+    function showLoading(title, subtext) {
+      document.getElementById("loadingText").innerText = title;
+      var sub = document.querySelector(".loading-subtext");
+      if (sub && subtext) sub.innerText = subtext;
+      
+      var overlay = document.getElementById("loadingOverlay");
+      overlay.style.display = "flex";
+      setTimeout(function() { overlay.style.opacity = "1"; }, 10);
+    }
+
+    function hideLoading() {
+      var overlay = document.getElementById("loadingOverlay");
+      overlay.style.opacity = "0";
+      setTimeout(function() { overlay.style.display = "none"; }, 300);
+    }
+
+    /**
+     * ⚙️ 깃허브 배포 연동 및 구글 폼 URL 동적 업데이트 도구들
+     */
+    function updateFormButton() {
+      var formBtn = document.getElementById("formLinkBtn");
+      if (formBtn) {
+        var url = FORM_URLS[currentLocationKey];
+        formBtn.href = url;
+        
+        var nameShort = currentLocationKey === 'gangseo' ? "강서" : "뚝섬";
+        formBtn.innerHTML = "📝 " + nameShort + " 강습신청서";
+      }
+    }
+
+    function openSettingsModal() {
+      var modal = document.getElementById("settingsModal");
+      modal.style.display = "flex";
+      setTimeout(function() { modal.style.opacity = "1"; }, 10);
+      
+      // 기존에 저장된 URL이 있으면 불러와 표시
+      var savedUrl = localStorage.getItem("gas_webapp_url");
+      if (savedUrl) {
+        document.getElementById("gasWebappUrl").value = savedUrl;
+      }
+    }
+
+    function closeSettingsModal() {
+      var modal = document.getElementById("settingsModal");
+      modal.style.opacity = "0";
+      setTimeout(function() { modal.style.display = "none"; }, 300);
+    }
+
+    function saveSettings() {
+      var urlInput = document.getElementById("gasWebappUrl").value.trim();
+      
+      if (urlInput === "") {
+        alert("구글 앱스 스크립트 웹 앱 URL을 입력해 주세요.");
+        return;
+      }
+      
+      if (urlInput.indexOf("https://script.google.com") !== 0) {
+        alert("올바른 구글 Apps Script 웹 앱 URL이 아닙니다.\nURL은 'https://script.google.com'으로 시작해야 합니다.");
+        return;
+      }
+      
+      localStorage.setItem("gas_webapp_url", urlInput);
+      alert("연동 설정이 완료되었습니다! 화면을 갱신합니다.");
+      closeSettingsModal();
+      location.reload();
+    }
+
+    function clearSettings() {
+      if (confirm("구글 스프레드시트와의 실시간 연동을 해제하고 시뮬레이션 모드로 돌아가시겠습니까?")) {
+        localStorage.removeItem("gas_webapp_url");
+        alert("연동이 해제되었습니다. 시뮬레이션 모드로 전환합니다.");
+        closeSettingsModal();
+        location.reload();
+      }
+    }
+  </script>
+
+  <!-- ⚙️ API 연동 설정 모달 -->
+  <div id="settingsModal" class="loading-overlay" style="display: none; opacity: 0; background: rgba(11, 15, 25, 0.95); z-index: 99999;">
+    <div class="glass-card" style="max-width: 500px; width: 90%; border-color: var(--neon-cyan); box-shadow: 0 0 30px rgba(0, 242, 254, 0.2); padding: 30px; position: relative;">
+      <span onclick="closeSettingsModal()" style="position: absolute; top: 16px; right: 20px; font-size: 20px; cursor: pointer; color: var(--text-muted); transition: color var(--transition-speed);" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--text-muted)'">✕</span>
+      
+      <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 20px; color: #fff; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+        ⚙️ 깃허브 실시간 데이터 연동 설정
+      </h3>
+      
+      <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px; line-height: 1.6;">
+        이 대시보드가 깃허브(GitHub Pages) 등 외부에 배포되었을 때 실시간 구글 스프레드시트 데이터와 연동하기 위한 설정입니다.
+      </p>
+      
+      <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; margin-bottom: 20px; font-size: 11px; line-height: 1.5; color: var(--text-main);">
+        <strong style="color: var(--neon-cyan); display: block; margin-bottom: 6px;">💡 연동 방법:</strong>
+        1. 구글 스프레드시트 열기 &rarr; [확장 프로그램] &rarr; [Apps Script] 클릭<br>
+        2. 우측 상단 [배포] &rarr; [새 배포] 클릭<br>
+        3. 유형: <strong style="color:#fff;">웹 앱(Web App)</strong> 선택<br>
+        4. 액세스 권한: <strong style="color:#fff;">모든 사용자(Anyone)</strong>로 설정 후 배포<br>
+        5. 생성된 <strong style="color:var(--neon-cyan);">웹 앱 URL</strong>을 복사하여 아래에 입력하세요.
+      </div>
+      
+      <div style="margin-bottom: 20px;">
+        <label for="gasWebappUrl" style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">구글 Apps Script 웹 앱 URL:</label>
+        <input type="text" id="gasWebappUrl" class="search-input" placeholder="https://script.google.com/macros/s/.../exec" style="padding-left: 16px; font-size: 13px; width: 100%;">
+      </div>
+      
+      <div style="display: flex; gap: 10px; justify-content: flex-end;">
+        <button class="filter-btn" onclick="clearSettings()" style="background: rgba(255, 63, 52, 0.1); border-color: rgba(255, 63, 52, 0.2); color: var(--neon-red);">연동 해제</button>
+        <button class="filter-btn active" onclick="saveSettings()" style="font-weight: 600; border-color: transparent;">저장 및 적용</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
